@@ -37,12 +37,12 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
         }
     }
 
-    func resolve(with value: V) throws {
+    public func resolve(with value: V) throws {
         guard self.result == nil else { throw FateError.alreadyResolvedOrRejected }
         self._result = Result.success(value)
     }
 
-    func reject(with error: E) throws {
+    public func reject(with error: E) throws {
         guard self.result == nil else { throw FateError.alreadyResolvedOrRejected }
         self._result = Result.failure(error)
     }

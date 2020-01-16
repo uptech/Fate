@@ -29,7 +29,7 @@ public class Future<V, ER: Error>: Fate.Observable {
 }
 
 public class Promise<V, E: Error>: Fate.Future<V, E> {
-    init(value: V? = nil) {
+    public init(value: V? = nil) {
         super.init()
 
         if let val = value {

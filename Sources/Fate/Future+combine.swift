@@ -1,7 +1,7 @@
 import Foundation
 
 extension Fate.Future {
-    static func combine<FA: Fate.Observable, FB: Fate.Observable>(_ fa: FA, _ fb: FB) -> Future<(Result<FA.T, FA.E>, Result<FB.T, FB.E>), FateError> {
+    public static func combine<FA: Fate.Observable, FB: Fate.Observable>(_ fa: FA, _ fb: FB) -> Future<(Result<FA.T, FA.E>, Result<FB.T, FB.E>), FateError> {
         let promise = Promise<(Result<FA.T, FA.E>, Result<FB.T, FB.E>), FateError>()
         let dispatchGroup = DispatchGroup()
 

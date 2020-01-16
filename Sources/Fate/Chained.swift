@@ -1,5 +1,5 @@
 extension Fate.Future {
-    func chained<NextValue, EM: Error>(with closure: @escaping (V) throws -> Future<NextValue, EM>) -> Future<NextValue, EM> {
+    public func chained<NextValue, EM: Error>(with closure: @escaping (V) throws -> Future<NextValue, EM>) -> Future<NextValue, EM> {
         let promise = Promise<NextValue, EM>()
 
         self.observe { result in

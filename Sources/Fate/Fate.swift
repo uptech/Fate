@@ -49,7 +49,7 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
 }
 
 extension Fate.Future {
-    static func all<T, EM>(_ futures: [Future<[T], EM>]) -> Future<[T], EM> {
+    public static func all<T, EM>(_ futures: [Future<[T], EM>]) -> Future<[T], EM> {
         let promise = Promise<[T], EM>()
 
         guard !futures.isEmpty else {
@@ -82,7 +82,7 @@ extension Fate.Future {
         return promise
     }
 
-    static func all<T, EM>(_ futures: [Future<T, EM>]) -> Future<Void, EM> {
+    public static func all<T, EM>(_ futures: [Future<T, EM>]) -> Future<Void, EM> {
         let promise = Promise<Void, EM>()
 
         guard !futures.isEmpty else {
@@ -115,7 +115,7 @@ extension Fate.Future {
         return promise
     }
 
-    static func all<T, EM>(_ futures: [Future<T, EM>]) -> Future<[T], EM> {
+    public static func all<T, EM>(_ futures: [Future<T, EM>]) -> Future<[T], EM> {
         let promise = Promise<[T], EM>()
 
         guard !futures.isEmpty else {

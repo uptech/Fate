@@ -1,7 +1,7 @@
 import Foundation
 
 extension Fate.Future {
-    static func allResults<T, EM>(_ futures: [Future<T, EM>]) -> Future<[Result<T, EM>], FateError> {
+    public static func allResults<T, EM>(_ futures: [Future<T, EM>]) -> Future<[Result<T, EM>], FateError> {
         let promise = Promise<[Result<T, EM>], FateError>()
 
         guard !futures.isEmpty else {

@@ -7,16 +7,28 @@ public class Future<V, ER: Error>: Fate.Observable {
 
     public var result: Result<V, ER>? { return self._result }
     fileprivate var _result: Result<V, ER>? {
-        didSet { let _ = _result.map(report) } // report immediately when set to actual result
+        didSet {
+            { [weak self] in
+                let _ = self?._result.map(report) // report immediately when set to actual result
+            }()
+        }
     }
     private lazy var callbacks = [(Result<V, ER>) -> Void]()
 
     public func observe(with callback: @escaping (Result<V, ER>) -> Void) {
         dispatchQueue.sync(flags: .barrier) {
-            callbacks.append(callback)
+            let callbackWrapper = { (result: Result<V, ER>) in
+                let _ = self
+                callback(result)
+            }
+            callbacks.append(callbackWrapper)
         }
 
         let _ = self._result.map(callback) // call callback immediately if already has result
+    }
+
+    public func cancel() {
+        self.callbacks = []
     }
 
     private func report(result: Result<V, ER>) {

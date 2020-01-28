@@ -1,15 +1,26 @@
 import XCTest
-@testable import Fate
+import Fate
 
 final class FateTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(true, true)
+    func someFuture() -> Future<Void, Error> {
+        let promise = Promise<Void, Error>()
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            try! promise.resolve(with: ())
+        }
+        return promise
+    }
+
+    func testCancel() {
+        let future = someFuture()
+        future.observe { (result) in
+            fatalError("Oh, man the observe got executed and it shouldn't have")
+        }
+        future.cancel()
+
+        sleep(5)
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testCancel", testCancel),
     ]
 }

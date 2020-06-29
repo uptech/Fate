@@ -31,6 +31,15 @@ public class Future<V, ER: Error>: Fate.Observable {
         self.callbacks = []
     }
 
+    public func wait() -> Result<V, ER> {
+        let semaphore = DispatchSemaphore(value: 0)
+        self.observe { (_) in
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return self.result!
+    }
+
     private func report(result: Result<V, ER>) {
         dispatchQueue.sync() {
             for callback in callbacks {

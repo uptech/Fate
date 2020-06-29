@@ -20,6 +20,17 @@ final class FateTests: XCTestCase {
         sleep(5)
     }
 
+    func testWait() {
+        let future = someFuture()
+        let result = future.wait()
+        switch result {
+        case .success(_):
+            print("Wait worked")
+        case .failure(_):
+            fatalError("Crap, this should have worked")
+        }
+    }
+
     static var allTests = [
         ("testCancel", testCancel),
     ]

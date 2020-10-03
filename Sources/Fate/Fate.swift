@@ -3,7 +3,7 @@ import Foundation
 public class Future<V, ER: Error>: Fate.Observable {
     public typealias T = V
     public typealias E = ER
-    let dispatchQueue = DispatchQueue(label: "ch.upte.Fate.Future.callbacks", attributes: .concurrent)
+    let callbacksSemaphore = DispatchSemaphore(value: 1)
 
     public var result: Result<V, ER>? { return self._result }
     fileprivate var _result: Result<V, ER>? {
@@ -16,19 +16,22 @@ public class Future<V, ER: Error>: Fate.Observable {
     private lazy var callbacks = [(Result<V, ER>) -> Void]()
 
     public func observe(with callback: @escaping (Result<V, ER>) -> Void) {
-        dispatchQueue.sync(flags: .barrier) {
-            let callbackWrapper = { (result: Result<V, ER>) in
-                let _ = self
-                callback(result)
-            }
-            callbacks.append(callbackWrapper)
+        let callbackWrapper = { (result: Result<V, ER>) in
+            let _ = self
+            callback(result)
         }
+
+        callbacksSemaphore.wait()
+        callbacks.append(callbackWrapper)
+        callbacksSemaphore.signal()
 
         let _ = self._result.map(callback) // call callback immediately if already has result
     }
 
     public func cancel() {
+        callbacksSemaphore.wait()
         self.callbacks = []
+        callbacksSemaphore.signal()
     }
 
     public func wait() -> Result<V, ER> {
@@ -41,11 +44,11 @@ public class Future<V, ER: Error>: Fate.Observable {
     }
 
     private func report(result: Result<V, ER>) {
-        dispatchQueue.sync() {
-            for callback in callbacks {
-                callback(result)
-            }
+        callbacksSemaphore.wait()
+        for callback in callbacks {
+            callback(result)
         }
+        callbacksSemaphore.signal()
     }
 }
 

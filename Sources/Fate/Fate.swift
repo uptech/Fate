@@ -61,6 +61,11 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
         }
     }
 
+    public init(result: Result<V, E>) {
+        super.init()
+        self._result = result
+    }
+
     public func resolve(with value: V) throws {
         guard self.result == nil else { throw FateError.alreadyResolvedOrRejected }
         self._result = Result.success(value)

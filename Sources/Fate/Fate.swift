@@ -61,6 +61,11 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
         }
     }
 
+    public init(error: E) {
+        super.init()
+        self._result = Result.failure(error)
+    }
+
     public init(result: Result<V, E>) {
         super.init()
         self._result = result

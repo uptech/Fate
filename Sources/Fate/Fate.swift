@@ -1,8 +1,6 @@
 import Foundation
 
 public class Future<V, ER: Error>: Fate.Observable {
-    public typealias T = V
-    public typealias E = ER
     let callbacksSemaphore = DispatchSemaphore(value: 1)
 
     public var result: Result<V, ER>? { return self._result }

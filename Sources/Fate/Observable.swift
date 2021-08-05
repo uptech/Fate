@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Observable: class {
+public protocol Observable: AnyObject {
     associatedtype T
     associatedtype E: Error
 

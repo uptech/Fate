@@ -16,6 +16,10 @@ public class Future<V, ER: Error>: Fate.Observable {
 
     public func observe(with callback: @escaping (Result<V, ER>) -> Void) {
         let callbackWrapper = { (result: Result<V, ER>) in
+            // Note: Here we explicitly create a retain cycle between the
+            // callbackWrapper & self (a.k.a. Future)
+            // and self & callbackWrapper. This prevents the Future from
+            // being deallocated prior to the callbacks being executed.
             let _ = self
             callback(result)
         }
@@ -47,6 +51,11 @@ public class Future<V, ER: Error>: Fate.Observable {
         for callback in callbacks {
             callback(result)
         }
+        // Note: Here we explicitly clear the callbacks (and their
+        // callbackWrappers) so that the explicit retain cycle made in the
+        // observe(with:) call are broken. In turn allowing the Future to
+        // be deallocated.
+        self.callbacks = []
         callbacksSemaphore.signal()
     }
 

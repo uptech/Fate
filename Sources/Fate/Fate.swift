@@ -66,7 +66,6 @@ public class Future<V, ER: Error>: Fate.Observable {
     }
 
     deinit {
-        self.callbacksSemaphore.signal()
         if #available(iOS 12.0, macOS 11.0, *) {
             os_log(.debug, log: .default, "Fate.Future(%{public}@).deinit", ObjectIdentifier(self).debugDescription)
         }

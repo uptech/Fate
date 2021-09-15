@@ -3,6 +3,12 @@ import os.log
 
 public class Future<V, ER: Error>: Fate.Observable {
     let callbacksSemaphore = DispatchSemaphore(value: 1)
+    
+    public init() {
+        if #available(iOS 12.0, macOS 11.0, *) {
+            os_log(.debug, log: .default, "Fate.Future.init")
+        }
+    }
 
     public var result: Result<V, ER>? { return self._result }
     fileprivate var _result: Result<V, ER>? {

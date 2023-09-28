@@ -88,11 +88,11 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
         self._result = Result.failure(error)
     }
 
-    public func wrapCallback(body: @escaping ((V) throws -> (), (E) throws -> ()) -> ()) {
-        body({ value in
-            try self.resolve(with: value)
-        }, { error in
-            try self.reject(with: error)
+    public func wrapCallback(body: (@escaping (V) throws -> (), @escaping (E) throws -> ()) -> ()) {
+        body({ [weak self] value in
+            try self?.resolve(with: value)
+        }, { [weak self] error in
+            try self?.reject(with: error)
         })
     }
 }

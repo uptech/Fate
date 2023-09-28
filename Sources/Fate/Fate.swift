@@ -87,6 +87,14 @@ public class Promise<V, E: Error>: Fate.Future<V, E> {
         guard self.result == nil else { throw FateError.alreadyResolvedOrRejected }
         self._result = Result.failure(error)
     }
+
+    public func wrapCallback(body: ((V) throws -> (), (E) throws -> ()) -> ()) {
+        body({ value in
+            try resolve(with: value)
+        }, { error in
+            try reject(with: error)
+        })
+    }
 }
 
 extension Fate.Future {
